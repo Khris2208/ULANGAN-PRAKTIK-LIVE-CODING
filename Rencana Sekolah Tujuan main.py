@@ -176,6 +176,71 @@ def manage_homes() -> dict | None:
         print('Pilihan tidak valid.')
 
 
+def filter_schools_by_score(recs_data: dict, min_score: float) -> list:
+    """Filter all schools from recs_data where user_score >= min_score requirement"""
+    matching = []
+    for zone_key in ['A', 'B', 'C']:
+        for school in recs_data.get(zone_key, []):
+            if isinstance(school, dict):
+                req_score = school.get('min_score', 0)
+                if min_score >= req_score:
+                    matching.append({
+                        'name': school.get('name'),
+                        'dist': school.get('dist'),
+                        'min_score': req_score,
+                        'zone': zone_key,
+                        'lat': school.get('lat'),
+                        'lon': school.get('lon')
+                    })
+    return sorted(matching, key=lambda x: x.get('min_score', 0), reverse=True)
+
+
+def recommend_by_score(recs_data: dict) -> None:
+    """Show school recommendations based on user's input score"""
+    print('\n--- Mode: Rekomendasi Sekolah Berdasarkan Nilai ---')
+    while True:
+        try:
+            user_score = float(input('Masukkan nilai Anda (0-100): ').strip())
+            if 0 <= user_score <= 100:
+                break
+            print('Nilai harus antara 0-100.')
+        except ValueError:
+            print('Masukkan angka yang valid.')
+    
+    matching = filter_schools_by_score(recs_data, user_score)
+    
+    if not matching:
+        print(f'\nSayang, tidak ada sekolah yang dapat Anda masuki dengan nilai {user_score}.')
+        print('Cobalah meningkatkan nilai Anda atau cari sekolah lain.')
+        return
+    
+    print(f'\nSekolah yang dapat Anda masuki dengan nilai {user_score}:')
+    for i, school in enumerate(matching, start=1):
+        zone = school.get('zone', '?')
+        name = school.get('name', 'Nama Tidak Diketahui')
+        dist = school.get('dist', '?')
+        min_req = school.get('min_score', '?')
+        print(f"  {i}. {name} (Zona {zone}) — {dist} km — Nilai min: {min_req}")
+    
+    # allow user to select one for details
+    while True:
+        sel = input('\nPilih nomor sekolah untuk detail lebih lanjut (0 untuk kembali): ').strip()
+        if sel == '0':
+            break
+        if sel.isdigit():
+            si = int(sel)
+            if 1 <= si <= len(matching):
+                selected = matching[si - 1]
+                print(f"\nSekolah: {selected['name']}")
+                print(f"Zona: {selected['zone']}")
+                print(f"Jarak (perkiraan): {selected['dist']} km")
+                print(f"Nilai minimal untuk masuk: {selected['min_score']}")
+                if 'lat' in selected and 'lon' in selected:
+                    print(f"Koordinat: ({selected['lat']}, {selected['lon']})")
+                continue
+        print('Pilihan tidak valid.')
+
+
 def main():
     transports = {
         "1": ("Jalan kaki", 5.0),
@@ -188,6 +253,24 @@ def main():
     recs_data = load_recommendations()
 
     print("Program Penentu Sekolah Tujuan — Hitung Jarak & Waktu Perjalanan")
+    # show main menu
+    while True:
+        print('\n=== MENU UTAMA ===')
+        print('1. Hitung jarak & rekomendasi (dengan input jarak)')
+        print('2. Lihat rekomendasi sekolah berdasarkan nilai Anda')
+        print('3. Keluar')
+        menu_choice = input('Pilih menu (1/2/3): ').strip()
+        if menu_choice == '1':
+            break
+        elif menu_choice == '2':
+            recommend_by_score(recs_data)
+            continue
+        elif menu_choice == '3':
+            print('Terima kasih — semoga membantu!')
+            return
+        else:
+            print('Pilihan tidak valid.')
+            continue
     while True:
         # choose home mode
         print('\nSumber data rumah:')
@@ -266,7 +349,7 @@ def main():
                             dist = round(haversine(home['lat'], home['lon'], chosen['lat'], chosen['lon']), 2)
                         else:
                             dist = chosen.get('dist') if isinstance(chosen, dict) else chosen[1]
-                        print(f"Memilih rekomendasi: {name} — {dist} km")
+                        print(f"Memilih rekomendasi: {name} — {dist} km (Perkiraan nilai minimal: {chosen.get('min_score','-')})")
                         break
                 print("Pilihan tidak valid, masukkan angka yang sesuai.")
 
