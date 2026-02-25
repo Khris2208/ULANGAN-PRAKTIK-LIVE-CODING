@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 from math import radians, sin, cos, sqrt, atan2
+from tabulate import tabulate
 
 
 def format_time(hours: float) -> str:
@@ -232,14 +233,20 @@ def select_program(school: dict) -> dict | None:
         return {"name": prog, "min_score": school.get('min_score', '-')}
     
     print(f"\nProgram/Jurusan yang tersedia di {school.get('name')}:")
+    
+    # Prepare table data
+    table_data = []
     for i, prog in enumerate(programs, start=1):
         if isinstance(prog, dict):
-            print(f"  {i}. {prog.get('name')} (Nilai min: {prog.get('min_score', '-')})")
+            table_data.append([i, prog.get('name', ''), prog.get('min_score', '-')])
         else:
-            print(f"  {i}. {prog} (Nilai min: {school.get('min_score', '-')})")
+            table_data.append([i, prog, school.get('min_score', '-')])
+    
+    headers = ["No", "Program/Jurusan", "Nilai Min"]
+    print(tabulate(table_data, headers=headers, tablefmt="grid"))
     
     while True:
-        sel = input('Pilih nomor program/jurusan: ').strip()
+        sel = input('\nPilih nomor program/jurusan: ').strip()
         if sel.isdigit():
             si = int(sel)
             if 1 <= si <= len(programs):
@@ -265,18 +272,27 @@ def recommend_by_score(recs_data: dict, level: str = None) -> None:
     matching = filter_schools_by_score(recs_data, user_score, level)
     
     if not matching:
-            level_str = f" untuk jenjang {level}" if level else ""
-            print(f'\nSayang, tidak ada sekolah yang dapat Anda masuki dengan nilai {user_score}{level_str}.')
+        level_str = f" untuk jenjang {level}" if level else ""
+        print(f'\nSayang, tidak ada sekolah yang dapat Anda masuki dengan nilai {user_score}{level_str}.')
+        print('Cobalah meningkatkan nilai Anda atau cari sekolah lain.')
         return
     
     print(f'\nSekolah yang dapat Anda masuki dengan nilai {user_score}:')
+    
+    # Prepare table data
+    table_data = []
     for i, school in enumerate(matching, start=1):
-        zone = school.get('zone', '?')
-        level = school.get('level', '?')
-        name = school.get('name', 'Nama Tidak Diketahui')
-        dist = school.get('dist', '?')
-        min_req = school.get('min_score', '?')
-        print(f"  {i}. {name} ({level}) — Zona {zone} — {dist} km — Nilai min: {min_req}")
+        table_data.append([
+            i,
+            school.get('name', ''),
+            school.get('level', '?'),
+            school.get('zone', '?'),
+            school.get('dist', '?'),
+            school.get('min_score', '?')
+        ])
+    
+    headers = ["No", "Sekolah", "Jenjang", "Zona", "Jarak (km)", "Nilai Min"]
+    print(tabulate(table_data, headers=headers, tablefmt="grid"))
     
     # allow user to select one for details
     while True:
@@ -296,14 +312,18 @@ def recommend_by_score(recs_data: dict, level: str = None) -> None:
                     print(f"Koordinat: ({selected['lat']}, {selected['lon']})")
                 # Show programs if available
                 if 'programs' in selected and selected['programs']:
-                    print("Program/Jurusan tersedia:")
+                    print("\nProgram/Jurusan tersedia:")
+                    prog_table = []
                     for prog in selected['programs']:
                         if isinstance(prog, dict):
                             pname = prog.get('name', 'Program')
                             pscore = prog.get('min_score', '-')
-                            print(f"  - {pname} (Nilai min: {pscore})")
+                            prog_table.append([pname, pscore])
                         else:
-                            print(f"  - {prog}")
+                            prog_table.append([prog, '-'])
+                    
+                    headers_prog = ["Program/Jurusan", "Nilai Min"]
+                    print(tabulate(prog_table, headers=headers_prog, tablefmt="grid"))
                 continue
         print('Pilihan tidak valid.')
 
@@ -423,11 +443,18 @@ def main():
         zrecs = [s for s in zrecs if isinstance(s, dict) and s.get('level') == user_level]
         if zrecs:
             print(f"\nRekomendasi sekolah untuk zona ini (Jenjang {user_level}):")
+            
+            # Prepare table data
+            zrecs_table = []
             for i, item in enumerate(zrecs, start=1):
                 rname = item.get('name') if isinstance(item, dict) else item[0]
                 rdist = item.get('dist') if isinstance(item, dict) else item[1]
                 rlevel = item.get('level', '?')
-                print(f"  {i}. {rname} ({rlevel}) — {rdist} km (Perkiraan nilai minimal: {item.get('min_score','-')})")
+                rmin = item.get('min_score', '-')
+                zrecs_table.append([i, rname, rlevel, rdist, rmin])
+            
+            headers_zrec = ["No", "Sekolah", "Jenjang", "Jarak (km)", "Nilai Min"]
+            print(tabulate(zrecs_table, headers=headers_zrec, tablefmt="grid"))
 
             # allow user to pick one of the recommendations as the chosen school
             while True:
@@ -449,8 +476,14 @@ def main():
                 print("Pilihan tidak valid, masukkan angka yang sesuai.")
 
         print("\nPilihan alat transportasi yang tersedia:")
+        
+        # Prepare table data for transportation
+        trans_table = []
         for k, (label, speed) in transports.items():
-            print(f"  {k}. {label} — {speed} km/jam")
+            trans_table.append([k, label, f"{speed} km/jam"])
+        
+        headers_trans = ["Nomor", "Transportasi", "Kecepatan"]
+        print(tabulate(trans_table, headers=headers_trans, tablefmt="grid"))
 
         # show recommended options based on distance (simple heuristic)
         recs = []
