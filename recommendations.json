@@ -1,17 +1,17 @@
 {
   "A": [
-    {"name": "SMA 1 Kota", "dist": 1.2, "min_score": 75, "programs": [{"name": "IPA", "min_score": 80}, {"name": "IPS", "min_score": 75}, {"name": "Bahasa", "min_score": 70}]},
-    {"name": "SMP Harapan", "dist": 1.8, "min_score": 65, "programs": [{"name": "Program A", "min_score": 70}, {"name": "Program B", "min_score": 65}]},
-    {"name": "SD Nusantara", "dist": 0.9, "min_score": 50, "programs": [{"name": "Kelas Reguler", "min_score": 50}]}
+    {"name": "SMA 1 Kota", "level": "SMA", "dist": 1.2, "lat": -6.2000, "lon": 106.8000, "min_score": 75, "programs": [{"name": "IPA", "min_score": 80}, {"name": "IPS", "min_score": 75}, {"name": "Bahasa", "min_score": 70}]},
+    {"name": "SMP Harapan", "level": "SMP", "dist": 1.8, "lat": -6.2010, "lon": 106.8050, "min_score": 65, "programs": [{"name": "Program A", "min_score": 70}, {"name": "Program B", "min_score": 65}]},
+    {"name": "SD Nusantara", "level": "SD", "dist": 0.9, "lat": -6.1990, "lon": 106.7980, "min_score": 50, "programs": [{"name": "Kelas Reguler", "min_score": 50}]}
   ],
   "B": [
-    {"name": "SMA 2 Kota", "dist": 3.5, "min_score": 70, "programs": [{"name": "IPA", "min_score": 78}, {"name": "IPS", "min_score": 72}, {"name": "Bahasa", "min_score": 68}, {"name": "Seni", "min_score": 65}]},
-    {"name": "SMK Kreatif", "dist": 4.2, "min_score": 68, "programs": [{"name": "Desain Grafis", "min_score": 72}, {"name": "Multimedia", "min_score": 68}, {"name": "Animasi", "min_score": 70}]},
-    {"name": "SMA Negeri 3", "dist": 5.8, "min_score": 72, "programs": [{"name": "IPA", "min_score": 78}, {"name": "IPS", "min_score": 72}]}
+    {"name": "SMA 2 Kota", "level": "SMA", "dist": 3.5, "lat": -6.2100, "lon": 106.8200, "min_score": 70, "programs": [{"name": "IPA", "min_score": 78}, {"name": "IPS", "min_score": 72}, {"name": "Bahasa", "min_score": 68}, {"name": "Seni", "min_score": 65}]},
+    {"name": "SMK Kreatif", "level": "SMK", "dist": 4.2, "lat": -6.2150, "lon": 106.8300, "min_score": 68, "programs": [{"name": "Desain Grafis", "min_score": 72}, {"name": "Multimedia", "min_score": 68}, {"name": "Animasi", "min_score": 70}]},
+    {"name": "SMA Negeri 3", "level": "SMA", "dist": 5.8, "lat": -6.2250, "lon": 106.8400, "min_score": 72, "programs": [{"name": "IPA", "min_score": 78}, {"name": "IPS", "min_score": 72}]}
   ],
   "C": [
-    {"name": "SMA Favorit", "dist": 9.5, "min_score": 85, "programs": [{"name": "IPA Unggulan", "min_score": 88}, {"name": "IPS Unggulan", "min_score": 85}]},
-    {"name": "SMK Teknik", "dist": 12.0, "min_score": 80, "programs": [{"name": "Teknik Mesin", "min_score": 82}, {"name": "Teknik Otomotif", "min_score": 80}, {"name": "Teknik Elektronika", "min_score": 85}]},
-    {"name": "SMA Unggulan", "dist": 18.3, "min_score": 88, "programs": [{"name": "IPA Advanced", "min_score": 92}, {"name": "IPS Advanced", "min_score": 90}, {"name": "STEM", "min_score": 94}]}
+    {"name": "SMA Favorit", "level": "SMA", "dist": 9.5, "lat": -6.2500, "lon": 106.8600, "min_score": 85, "programs": [{"name": "IPA Unggulan", "min_score": 88}, {"name": "IPS Unggulan", "min_score": 85}]},
+    {"name": "SMK Teknik", "level": "SMK", "dist": 12.0, "lat": -6.2700, "lon": 106.8800, "min_score": 80, "programs": [{"name": "Teknik Mesin", "min_score": 82}, {"name": "Teknik Otomotif", "min_score": 80}, {"name": "Teknik Elektronika", "min_score": 85}]},
+    {"name": "SMA Unggulan", "level": "SMA", "dist": 18.3, "lat": -6.3000, "lon": 106.9000, "min_score": 88, "programs": [{"name": "IPA Advanced", "min_score": 92}, {"name": "IPS Advanced", "min_score": 90}, {"name": "STEM", "min_score": 94}]}
   ]
 }

@@ -25,13 +25,35 @@ def haversine(lat1, lon1, lat2, lon2):
     return R * c
 
 
-def choose_from_examples():
+def select_level() -> str:
+    """Ask user to select their educational level"""
+    levels = ["SD", "SMP", "SMA", "SMK"]
+    print("\n=== Pilih Jenjang Pendidikan ===")
+    for i, level in enumerate(levels, start=1):
+        print(f"  {i}. {level}")
+    while True:
+        choice = input("Pilih nomor jenjang (1-4): ").strip()
+        if choice.isdigit():
+            idx = int(choice)
+            if 1 <= idx <= len(levels):
+                return levels[idx - 1]
+        print("Pilihan tidak valid, coba lagi.")
+
+
+def choose_from_examples(level: str = None):
     examples = [
         ("SMA 1 Kota", 2.3),
         ("SMA 2 Kota", 5.0),
         ("SMK Teknik", 7.8),
         ("SMA Favorit", 12.5),
     ]
+    if level:
+        # Filter examples by level
+        filtered = []
+        for name, dist in examples:
+            if (level == "SMA" and name in ["SMA 1 Kota", "SMA 2 Kota", "SMA Favorit"]) or (level == "SMK" and name == "SMK Teknik"):
+                filtered.append((name, dist))
+        examples = filtered
     print("Daftar contoh sekolah:")
     for i, (name, dist) in enumerate(examples, start=1):
         print(f"  {i}. {name} — {dist} km")
@@ -92,19 +114,19 @@ def load_recommendations(path: str = 'recommendations.json') -> dict:
     p = Path(path)
     default = {
         'A': [
-            {"name": "SMA 1 Kota", "dist": 1.2, "lat": -6.2000, "lon": 106.8000, "min_score": 75, "programs": [{"name": "IPA", "min_score": 80}, {"name": "IPS", "min_score": 75}, {"name": "Bahasa", "min_score": 70}]},
-            {"name": "SMP Harapan", "dist": 1.8, "lat": -6.2010, "lon": 106.8050, "min_score": 65, "programs": [{"name": "Program A", "min_score": 70}, {"name": "Program B", "min_score": 65}]},
-            {"name": "SD Nusantara", "dist": 0.9, "lat": -6.1990, "lon": 106.7980, "min_score": 50, "programs": [{"name": "Kelas Reguler", "min_score": 50}]},
+            {"name": "SMA 1 Kota", "level": "SMA", "dist": 1.2, "lat": -6.2000, "lon": 106.8000, "min_score": 75, "programs": [{"name": "IPA", "min_score": 80}, {"name": "IPS", "min_score": 75}, {"name": "Bahasa", "min_score": 70}]},
+            {"name": "SMP Harapan", "level": "SMP", "dist": 1.8, "lat": -6.2010, "lon": 106.8050, "min_score": 65, "programs": [{"name": "Program A", "min_score": 70}, {"name": "Program B", "min_score": 65}]},
+            {"name": "SD Nusantara", "level": "SD", "dist": 0.9, "lat": -6.1990, "lon": 106.7980, "min_score": 50, "programs": [{"name": "Kelas Reguler", "min_score": 50}]},
         ],
         'B': [
-            {"name": "SMA 2 Kota", "dist": 3.5, "lat": -6.2100, "lon": 106.8200, "min_score": 70, "programs": [{"name": "IPA", "min_score": 78}, {"name": "IPS", "min_score": 72}, {"name": "Bahasa", "min_score": 68}, {"name": "Seni", "min_score": 65}]},
-            {"name": "SMK Kreatif", "dist": 4.2, "lat": -6.2150, "lon": 106.8300, "min_score": 68, "programs": [{"name": "Desain Grafis", "min_score": 72}, {"name": "Multimedia", "min_score": 68}, {"name": "Animasi", "min_score": 70}]},
-            {"name": "SMA Negeri 3", "dist": 5.8, "lat": -6.2250, "lon": 106.8400, "min_score": 72, "programs": [{"name": "IPA", "min_score": 78}, {"name": "IPS", "min_score": 72}]},
+            {"name": "SMA 2 Kota", "level": "SMA", "dist": 3.5, "lat": -6.2100, "lon": 106.8200, "min_score": 70, "programs": [{"name": "IPA", "min_score": 78}, {"name": "IPS", "min_score": 72}, {"name": "Bahasa", "min_score": 68}, {"name": "Seni", "min_score": 65}]},
+            {"name": "SMK Kreatif", "level": "SMK", "dist": 4.2, "lat": -6.2150, "lon": 106.8300, "min_score": 68, "programs": [{"name": "Desain Grafis", "min_score": 72}, {"name": "Multimedia", "min_score": 68}, {"name": "Animasi", "min_score": 70}]},
+            {"name": "SMA Negeri 3", "level": "SMA", "dist": 5.8, "lat": -6.2250, "lon": 106.8400, "min_score": 72, "programs": [{"name": "IPA", "min_score": 78}, {"name": "IPS", "min_score": 72}]},
         ],
         'C': [
-            {"name": "SMA Favorit", "dist": 9.5, "lat": -6.2500, "lon": 106.8600, "min_score": 85, "programs": [{"name": "IPA Unggulan", "min_score": 88}, {"name": "IPS Unggulan", "min_score": 85}]},
-            {"name": "SMK Teknik", "dist": 12.0, "lat": -6.2700, "lon": 106.8800, "min_score": 80, "programs": [{"name": "Teknik Mesin", "min_score": 82}, {"name": "Teknik Otomotif", "min_score": 80}, {"name": "Teknik Elektronika", "min_score": 85}]},
-            {"name": "SMA Unggulan", "dist": 18.3, "lat": -6.3000, "lon": 106.9000, "min_score": 88, "programs": [{"name": "IPA Advanced", "min_score": 92}, {"name": "IPS Advanced", "min_score": 90}, {"name": "STEM", "min_score": 94}]},
+            {"name": "SMA Favorit", "level": "SMA", "dist": 9.5, "lat": -6.2500, "lon": 106.8600, "min_score": 85, "programs": [{"name": "IPA Unggulan", "min_score": 88}, {"name": "IPS Unggulan", "min_score": 85}]},
+            {"name": "SMK Teknik", "level": "SMK", "dist": 12.0, "lat": -6.2700, "lon": 106.8800, "min_score": 80, "programs": [{"name": "Teknik Mesin", "min_score": 82}, {"name": "Teknik Otomotif", "min_score": 80}, {"name": "Teknik Elektronika", "min_score": 85}]},
+            {"name": "SMA Unggulan", "level": "SMA", "dist": 18.3, "lat": -6.3000, "lon": 106.9000, "min_score": 88, "programs": [{"name": "IPA Advanced", "min_score": 92}, {"name": "IPS Advanced", "min_score": 90}, {"name": "STEM", "min_score": 94}]},
         ],
     }
     if not p.exists():
@@ -176,16 +198,18 @@ def manage_homes() -> dict | None:
         print('Pilihan tidak valid.')
 
 
-def filter_schools_by_score(recs_data: dict, min_score: float) -> list:
-    """Filter all schools from recs_data where user_score >= min_score requirement"""
+def filter_schools_by_score(recs_data: dict, min_score: float, level: str = None) -> list:
+    """Filter all schools from recs_data where user_score >= min_score requirement and matches level"""
     matching = []
     for zone_key in ['A', 'B', 'C']:
         for school in recs_data.get(zone_key, []):
             if isinstance(school, dict):
+                school_level = school.get('level', '')
                 req_score = school.get('min_score', 0)
-                if min_score >= req_score:
+                if min_score >= req_score and (level is None or school_level == level):
                     matching.append({
                         'name': school.get('name'),
+                        'level': school_level,
                         'dist': school.get('dist'),
                         'min_score': req_score,
                         'zone': zone_key,
@@ -226,8 +250,8 @@ def select_program(school: dict) -> dict | None:
         print('Pilihan tidak valid.')
 
 
-def recommend_by_score(recs_data: dict) -> None:
-    """Show school recommendations based on user's input score"""
+def recommend_by_score(recs_data: dict, level: str = None) -> None:
+    """Show school recommendations based on user's input score and level"""
     print('\n--- Mode: Rekomendasi Sekolah Berdasarkan Nilai ---')
     while True:
         try:
@@ -238,20 +262,21 @@ def recommend_by_score(recs_data: dict) -> None:
         except ValueError:
             print('Masukkan angka yang valid.')
     
-    matching = filter_schools_by_score(recs_data, user_score)
+    matching = filter_schools_by_score(recs_data, user_score, level)
     
     if not matching:
-        print(f'\nSayang, tidak ada sekolah yang dapat Anda masuki dengan nilai {user_score}.')
-        print('Cobalah meningkatkan nilai Anda atau cari sekolah lain.')
+            level_str = f" untuk jenjang {level}" if level else ""
+            print(f'\nSayang, tidak ada sekolah yang dapat Anda masuki dengan nilai {user_score}{level_str}.')
         return
     
     print(f'\nSekolah yang dapat Anda masuki dengan nilai {user_score}:')
     for i, school in enumerate(matching, start=1):
         zone = school.get('zone', '?')
+        level = school.get('level', '?')
         name = school.get('name', 'Nama Tidak Diketahui')
         dist = school.get('dist', '?')
         min_req = school.get('min_score', '?')
-        print(f"  {i}. {name} (Zona {zone}) — {dist} km — Nilai min: {min_req}")
+        print(f"  {i}. {name} ({level}) — Zona {zone} — {dist} km — Nilai min: {min_req}")
     
     # allow user to select one for details
     while True:
@@ -263,6 +288,7 @@ def recommend_by_score(recs_data: dict) -> None:
             if 1 <= si <= len(matching):
                 selected = matching[si - 1]
                 print(f"\nSekolah: {selected['name']}")
+                print(f"Jenjang: {selected.get('level', '?')}")
                 print(f"Zona: {selected['zone']}")
                 print(f"Jarak (perkiraan): {selected['dist']} km")
                 print(f"Nilai minimal untuk masuk: {selected['min_score']}")
@@ -294,19 +320,29 @@ def main():
     recs_data = load_recommendations()
 
     print("Program Penentu Sekolah Tujuan — Hitung Jarak & Waktu Perjalanan")
+    
+    # Select user's educational level
+    user_level = select_level()
+    print(f"\n✓ Jenjang terpilih: {user_level}")
+    
     # show main menu
     while True:
         print('\n=== MENU UTAMA ===')
         print('1. Hitung jarak & rekomendasi (dengan input jarak)')
         print('2. Lihat rekomendasi sekolah berdasarkan nilai Anda')
-        print('3. Keluar')
-        menu_choice = input('Pilih menu (1/2/3): ').strip()
+        print('3. Ubah jenjang pendidikan')
+        print('4. Keluar')
+        menu_choice = input('Pilih menu (1/2/3/4): ').strip()
         if menu_choice == '1':
             break
         elif menu_choice == '2':
-            recommend_by_score(recs_data)
+            recommend_by_score(recs_data, user_level)
             continue
         elif menu_choice == '3':
+            user_level = select_level()
+            print(f"\n✓ Jenjang terpilih: {user_level}")
+            continue
+        elif menu_choice == '4':
             print('Terima kasih — semoga membantu!')
             return
         else:
@@ -322,7 +358,7 @@ def main():
         if mode == '1':
             home = manage_homes()
         # proceed to school selection
-        name, dist = choose_from_examples()
+        name, dist = choose_from_examples(user_level)
         if name is None:
             name = input("Masukkan nama sekolah tujuan: ").strip() or "Sekolah tujuan"
             if home is None:
@@ -383,12 +419,15 @@ def main():
         # rekomendasi sekolah berdasarkan zona (dimuat dari recommendations.json)
         zkey = zone_key(dist)
         zrecs = recs_data.get(zkey, [])
+        # Filter recommendations by user's level
+        zrecs = [s for s in zrecs if isinstance(s, dict) and s.get('level') == user_level]
         if zrecs:
-            print("\nRekomendasi sekolah untuk zona ini:")
+            print(f"\nRekomendasi sekolah untuk zona ini (Jenjang {user_level}):")
             for i, item in enumerate(zrecs, start=1):
                 rname = item.get('name') if isinstance(item, dict) else item[0]
                 rdist = item.get('dist') if isinstance(item, dict) else item[1]
-                print(f"  {i}. {rname} — {rdist} km (Perkiraan nilai minimal: {item.get('min_score','-')})")
+                rlevel = item.get('level', '?')
+                print(f"  {i}. {rname} ({rlevel}) — {rdist} km (Perkiraan nilai minimal: {item.get('min_score','-')})")
 
             # allow user to pick one of the recommendations as the chosen school
             while True:
