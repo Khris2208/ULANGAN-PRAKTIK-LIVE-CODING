@@ -1,17 +1,17 @@
 {
   "A": [
-    {"name": "SMA 1 Kota", "dist": 1.2, "min_score": 75},
-    {"name": "SMP Harapan", "dist": 1.8, "min_score": 65},
-    {"name": "SD Nusantara", "dist": 0.9, "min_score": 50}
+    {"name": "SMA 1 Kota", "dist": 1.2, "min_score": 75, "programs": ["IPA", "IPS", "Bahasa"]},
+    {"name": "SMP Harapan", "dist": 1.8, "min_score": 65, "programs": ["Program A", "Program B"]},
+    {"name": "SD Nusantara", "dist": 0.9, "min_score": 50, "programs": ["Kelas Reguler"]}
   ],
   "B": [
-    {"name": "SMA 2 Kota", "dist": 3.5, "min_score": 70},
-    {"name": "SMK Kreatif", "dist": 4.2, "min_score": 68},
-    {"name": "SMA Negeri 3", "dist": 5.8, "min_score": 72}
+    {"name": "SMA 2 Kota", "dist": 3.5, "min_score": 70, "programs": ["IPA", "IPS", "Bahasa", "Seni"]},
+    {"name": "SMK Kreatif", "dist": 4.2, "min_score": 68, "programs": ["Desain Grafis", "Multimedia", "Animasi"]},
+    {"name": "SMA Negeri 3", "dist": 5.8, "min_score": 72, "programs": ["IPA", "IPS"]}
   ],
   "C": [
-    {"name": "SMA Favorit", "dist": 9.5, "min_score": 85},
-    {"name": "SMK Teknik", "dist": 12.0, "min_score": 80},
-    {"name": "SMA Unggulan", "dist": 18.3, "min_score": 88}
+    {"name": "SMA Favorit", "dist": 9.5, "min_score": 85, "programs": ["IPA Unggulan", "IPS Unggulan"]},
+    {"name": "SMK Teknik", "dist": 12.0, "min_score": 80, "programs": ["Teknik Mesin", "Teknik Otomotif", "Teknik Elektronika"]},
+    {"name": "SMA Unggulan", "dist": 18.3, "min_score": 88, "programs": ["IPA Advanced", "IPS Advanced", "STEM"]}
   ]
 }

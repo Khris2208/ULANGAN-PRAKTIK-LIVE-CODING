@@ -92,19 +92,19 @@ def load_recommendations(path: str = 'recommendations.json') -> dict:
     p = Path(path)
     default = {
         'A': [
-            {"name": "SMA 1 Kota", "dist": 1.2, "lat": -6.2000, "lon": 106.8000, "min_score": 75},
-            {"name": "SMP Harapan", "dist": 1.8, "lat": -6.2010, "lon": 106.8050, "min_score": 65},
-            {"name": "SD Nusantara", "dist": 0.9, "lat": -6.1990, "lon": 106.7980, "min_score": 50},
+            {"name": "SMA 1 Kota", "dist": 1.2, "lat": -6.2000, "lon": 106.8000, "min_score": 75, "programs": ["IPA", "IPS", "Bahasa"]},
+            {"name": "SMP Harapan", "dist": 1.8, "lat": -6.2010, "lon": 106.8050, "min_score": 65, "programs": ["Program A", "Program B"]},
+            {"name": "SD Nusantara", "dist": 0.9, "lat": -6.1990, "lon": 106.7980, "min_score": 50, "programs": ["Kelas Reguler"]},
         ],
         'B': [
-            {"name": "SMA 2 Kota", "dist": 3.5, "lat": -6.2100, "lon": 106.8200, "min_score": 70},
-            {"name": "SMK Kreatif", "dist": 4.2, "lat": -6.2150, "lon": 106.8300, "min_score": 68},
-            {"name": "SMA Negeri 3", "dist": 5.8, "lat": -6.2250, "lon": 106.8400, "min_score": 72},
+            {"name": "SMA 2 Kota", "dist": 3.5, "lat": -6.2100, "lon": 106.8200, "min_score": 70, "programs": ["IPA", "IPS", "Bahasa", "Seni"]},
+            {"name": "SMK Kreatif", "dist": 4.2, "lat": -6.2150, "lon": 106.8300, "min_score": 68, "programs": ["Desain Grafis", "Multimedia", "Animasi"]},
+            {"name": "SMA Negeri 3", "dist": 5.8, "lat": -6.2250, "lon": 106.8400, "min_score": 72, "programs": ["IPA", "IPS"]},
         ],
         'C': [
-            {"name": "SMA Favorit", "dist": 9.5, "lat": -6.2500, "lon": 106.8600, "min_score": 85},
-            {"name": "SMK Teknik", "dist": 12.0, "lat": -6.2700, "lon": 106.8800, "min_score": 80},
-            {"name": "SMA Unggulan", "dist": 18.3, "lat": -6.3000, "lon": 106.9000, "min_score": 88},
+            {"name": "SMA Favorit", "dist": 9.5, "lat": -6.2500, "lon": 106.8600, "min_score": 85, "programs": ["IPA Unggulan", "IPS Unggulan"]},
+            {"name": "SMK Teknik", "dist": 12.0, "lat": -6.2700, "lon": 106.8800, "min_score": 80, "programs": ["Teknik Mesin", "Teknik Otomotif", "Teknik Elektronika"]},
+            {"name": "SMA Unggulan", "dist": 18.3, "lat": -6.3000, "lon": 106.9000, "min_score": 88, "programs": ["IPA Advanced", "IPS Advanced", "STEM"]},
         ],
     }
     if not p.exists():
@@ -190,9 +190,31 @@ def filter_schools_by_score(recs_data: dict, min_score: float) -> list:
                         'min_score': req_score,
                         'zone': zone_key,
                         'lat': school.get('lat'),
-                        'lon': school.get('lon')
+                        'lon': school.get('lon'),
+                        'programs': school.get('programs', [])
                     })
     return sorted(matching, key=lambda x: x.get('min_score', 0), reverse=True)
+
+
+def select_program(school: dict) -> str | None:
+    """Allow user to select a program/major from available options"""
+    programs = school.get('programs', [])
+    if not programs:
+        return None
+    if len(programs) == 1:
+        return programs[0]
+    
+    print(f"\nProgram/Jurusan yang tersedia di {school.get('name')}:")
+    for i, prog in enumerate(programs, start=1):
+        print(f"  {i}. {prog}")
+    
+    while True:
+        sel = input('Pilih nomor program/jurusan: ').strip()
+        if sel.isdigit():
+            si = int(sel)
+            if 1 <= si <= len(programs):
+                return programs[si - 1]
+        print('Pilihan tidak valid.')
 
 
 def recommend_by_score(recs_data: dict) -> None:
@@ -237,6 +259,9 @@ def recommend_by_score(recs_data: dict) -> None:
                 print(f"Nilai minimal untuk masuk: {selected['min_score']}")
                 if 'lat' in selected and 'lon' in selected:
                     print(f"Koordinat: ({selected['lat']}, {selected['lon']})")
+                # Show programs if available
+                if 'programs' in selected and selected['programs']:
+                    print(f"Program Tersedia: {', '.join(selected['programs'])}")
                 continue
         print('Pilihan tidak valid.')
 
@@ -324,6 +349,21 @@ def main():
         zone = classify_zone(dist)
         print(f"Zona sekolah berdasarkan jarak: {zone}")
 
+        # Try to find school in recs_data and get programs
+        selected_program = None
+        school_obj = None
+        for lst in recs_data.values():
+            for item in lst:
+                iname = item.get('name') if isinstance(item, dict) else item[0]
+                if iname == name:
+                    school_obj = item
+                    break
+            if school_obj:
+                break
+        
+        if school_obj and isinstance(school_obj, dict):
+            selected_program = select_program(school_obj)
+
         # rekomendasi sekolah berdasarkan zona (dimuat dari recommendations.json)
         zkey = zone_key(dist)
         zrecs = recs_data.get(zkey, [])
@@ -379,6 +419,8 @@ def main():
         print(f"\nAnda memilih: {label}")
         print(f"Kecepatan rata-rata: {speed} km/jam")
         print(f"Perkiraan waktu perjalanan: {format_time(hours)}")
+        if selected_program:
+            print(f"Program/Jurusan: {selected_program}")
 
         # show fastest option
         best = min(transports.values(), key=lambda x: dist / x[1])
