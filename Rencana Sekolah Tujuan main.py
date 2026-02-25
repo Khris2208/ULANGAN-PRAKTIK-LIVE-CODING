@@ -92,19 +92,19 @@ def load_recommendations(path: str = 'recommendations.json') -> dict:
     p = Path(path)
     default = {
         'A': [
-            {"name": "SMA 1 Kota", "dist": 1.2, "lat": -6.2000, "lon": 106.8000, "min_score": 75, "programs": ["IPA", "IPS", "Bahasa"]},
-            {"name": "SMP Harapan", "dist": 1.8, "lat": -6.2010, "lon": 106.8050, "min_score": 65, "programs": ["Program A", "Program B"]},
-            {"name": "SD Nusantara", "dist": 0.9, "lat": -6.1990, "lon": 106.7980, "min_score": 50, "programs": ["Kelas Reguler"]},
+            {"name": "SMA 1 Kota", "dist": 1.2, "lat": -6.2000, "lon": 106.8000, "min_score": 75, "programs": [{"name": "IPA", "min_score": 80}, {"name": "IPS", "min_score": 75}, {"name": "Bahasa", "min_score": 70}]},
+            {"name": "SMP Harapan", "dist": 1.8, "lat": -6.2010, "lon": 106.8050, "min_score": 65, "programs": [{"name": "Program A", "min_score": 70}, {"name": "Program B", "min_score": 65}]},
+            {"name": "SD Nusantara", "dist": 0.9, "lat": -6.1990, "lon": 106.7980, "min_score": 50, "programs": [{"name": "Kelas Reguler", "min_score": 50}]},
         ],
         'B': [
-            {"name": "SMA 2 Kota", "dist": 3.5, "lat": -6.2100, "lon": 106.8200, "min_score": 70, "programs": ["IPA", "IPS", "Bahasa", "Seni"]},
-            {"name": "SMK Kreatif", "dist": 4.2, "lat": -6.2150, "lon": 106.8300, "min_score": 68, "programs": ["Desain Grafis", "Multimedia", "Animasi"]},
-            {"name": "SMA Negeri 3", "dist": 5.8, "lat": -6.2250, "lon": 106.8400, "min_score": 72, "programs": ["IPA", "IPS"]},
+            {"name": "SMA 2 Kota", "dist": 3.5, "lat": -6.2100, "lon": 106.8200, "min_score": 70, "programs": [{"name": "IPA", "min_score": 78}, {"name": "IPS", "min_score": 72}, {"name": "Bahasa", "min_score": 68}, {"name": "Seni", "min_score": 65}]},
+            {"name": "SMK Kreatif", "dist": 4.2, "lat": -6.2150, "lon": 106.8300, "min_score": 68, "programs": [{"name": "Desain Grafis", "min_score": 72}, {"name": "Multimedia", "min_score": 68}, {"name": "Animasi", "min_score": 70}]},
+            {"name": "SMA Negeri 3", "dist": 5.8, "lat": -6.2250, "lon": 106.8400, "min_score": 72, "programs": [{"name": "IPA", "min_score": 78}, {"name": "IPS", "min_score": 72}]},
         ],
         'C': [
-            {"name": "SMA Favorit", "dist": 9.5, "lat": -6.2500, "lon": 106.8600, "min_score": 85, "programs": ["IPA Unggulan", "IPS Unggulan"]},
-            {"name": "SMK Teknik", "dist": 12.0, "lat": -6.2700, "lon": 106.8800, "min_score": 80, "programs": ["Teknik Mesin", "Teknik Otomotif", "Teknik Elektronika"]},
-            {"name": "SMA Unggulan", "dist": 18.3, "lat": -6.3000, "lon": 106.9000, "min_score": 88, "programs": ["IPA Advanced", "IPS Advanced", "STEM"]},
+            {"name": "SMA Favorit", "dist": 9.5, "lat": -6.2500, "lon": 106.8600, "min_score": 85, "programs": [{"name": "IPA Unggulan", "min_score": 88}, {"name": "IPS Unggulan", "min_score": 85}]},
+            {"name": "SMK Teknik", "dist": 12.0, "lat": -6.2700, "lon": 106.8800, "min_score": 80, "programs": [{"name": "Teknik Mesin", "min_score": 82}, {"name": "Teknik Otomotif", "min_score": 80}, {"name": "Teknik Elektronika", "min_score": 85}]},
+            {"name": "SMA Unggulan", "dist": 18.3, "lat": -6.3000, "lon": 106.9000, "min_score": 88, "programs": [{"name": "IPA Advanced", "min_score": 92}, {"name": "IPS Advanced", "min_score": 90}, {"name": "STEM", "min_score": 94}]},
         ],
     }
     if not p.exists():
@@ -196,24 +196,33 @@ def filter_schools_by_score(recs_data: dict, min_score: float) -> list:
     return sorted(matching, key=lambda x: x.get('min_score', 0), reverse=True)
 
 
-def select_program(school: dict) -> str | None:
-    """Allow user to select a program/major from available options"""
+def select_program(school: dict) -> dict | None:
+    """Allow user to select a program/major from available options; returns {name, min_score}"""
     programs = school.get('programs', [])
     if not programs:
         return None
     if len(programs) == 1:
-        return programs[0]
+        prog = programs[0]
+        if isinstance(prog, dict):
+            return prog
+        return {"name": prog, "min_score": school.get('min_score', '-')}
     
     print(f"\nProgram/Jurusan yang tersedia di {school.get('name')}:")
     for i, prog in enumerate(programs, start=1):
-        print(f"  {i}. {prog}")
+        if isinstance(prog, dict):
+            print(f"  {i}. {prog.get('name')} (Nilai min: {prog.get('min_score', '-')})")
+        else:
+            print(f"  {i}. {prog} (Nilai min: {school.get('min_score', '-')})")
     
     while True:
         sel = input('Pilih nomor program/jurusan: ').strip()
         if sel.isdigit():
             si = int(sel)
             if 1 <= si <= len(programs):
-                return programs[si - 1]
+                prog = programs[si - 1]
+                if isinstance(prog, dict):
+                    return prog
+                return {"name": prog, "min_score": school.get('min_score', '-')}
         print('Pilihan tidak valid.')
 
 
@@ -261,7 +270,14 @@ def recommend_by_score(recs_data: dict) -> None:
                     print(f"Koordinat: ({selected['lat']}, {selected['lon']})")
                 # Show programs if available
                 if 'programs' in selected and selected['programs']:
-                    print(f"Program Tersedia: {', '.join(selected['programs'])}")
+                    print("Program/Jurusan tersedia:")
+                    for prog in selected['programs']:
+                        if isinstance(prog, dict):
+                            pname = prog.get('name', 'Program')
+                            pscore = prog.get('min_score', '-')
+                            print(f"  - {pname} (Nilai min: {pscore})")
+                        else:
+                            print(f"  - {prog}")
                 continue
         print('Pilihan tidak valid.')
 
@@ -420,7 +436,12 @@ def main():
         print(f"Kecepatan rata-rata: {speed} km/jam")
         print(f"Perkiraan waktu perjalanan: {format_time(hours)}")
         if selected_program:
-            print(f"Program/Jurusan: {selected_program}")
+            if isinstance(selected_program, dict):
+                prog_name = selected_program.get('name', 'Program')
+                prog_score = selected_program.get('min_score', '-')
+                print(f"Program/Jurusan: {prog_name} (Nilai min: {prog_score})")
+            else:
+                print(f"Program/Jurusan: {selected_program}")
 
         # show fastest option
         best = min(transports.values(), key=lambda x: dist / x[1])
