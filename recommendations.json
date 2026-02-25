@@ -1,17 +1,17 @@
 {
   "A": [
-    {"name": "SMA 1 Kota", "dist": 1.2},
-    {"name": "SMP Harapan", "dist": 1.8},
-    {"name": "SD Nusantara", "dist": 0.9}
+    {"name": "SMA 1 Kota", "dist": 1.2, "min_score": 75},
+    {"name": "SMP Harapan", "dist": 1.8, "min_score": 65},
+    {"name": "SD Nusantara", "dist": 0.9, "min_score": 50}
   ],
   "B": [
-    {"name": "SMA 2 Kota", "dist": 3.5},
-    {"name": "SMK Kreatif", "dist": 4.2},
-    {"name": "SMA Negeri 3", "dist": 5.8}
+    {"name": "SMA 2 Kota", "dist": 3.5, "min_score": 70},
+    {"name": "SMK Kreatif", "dist": 4.2, "min_score": 68},
+    {"name": "SMA Negeri 3", "dist": 5.8, "min_score": 72}
   ],
   "C": [
-    {"name": "SMA Favorit", "dist": 9.5},
-    {"name": "SMK Teknik", "dist": 12.0},
+    {"name": "SMA Favorit", "dist": 9.5, "min_score": 85},
+    {"name": "SMK Teknik", "dist": 12.0, "min_score": 80},
     {"name": "SMA Unggulan", "dist": 18.3}
   ]
 }
