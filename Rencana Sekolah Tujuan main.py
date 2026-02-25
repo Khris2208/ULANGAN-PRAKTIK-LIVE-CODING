@@ -92,19 +92,19 @@ def load_recommendations(path: str = 'recommendations.json') -> dict:
     p = Path(path)
     default = {
         'A': [
-            {"name": "SMA 1 Kota", "dist": 1.2, "lat": -6.2000, "lon": 106.8000},
-            {"name": "SMP Harapan", "dist": 1.8, "lat": -6.2010, "lon": 106.8050},
-            {"name": "SD Nusantara", "dist": 0.9, "lat": -6.1990, "lon": 106.7980},
+            {"name": "SMA 1 Kota", "dist": 1.2, "lat": -6.2000, "lon": 106.8000, "min_score": 75},
+            {"name": "SMP Harapan", "dist": 1.8, "lat": -6.2010, "lon": 106.8050, "min_score": 65},
+            {"name": "SD Nusantara", "dist": 0.9, "lat": -6.1990, "lon": 106.7980, "min_score": 50},
         ],
         'B': [
-            {"name": "SMA 2 Kota", "dist": 3.5, "lat": -6.2100, "lon": 106.8200},
-            {"name": "SMK Kreatif", "dist": 4.2, "lat": -6.2150, "lon": 106.8300},
-            {"name": "SMA Negeri 3", "dist": 5.8, "lat": -6.2250, "lon": 106.8400},
+            {"name": "SMA 2 Kota", "dist": 3.5, "lat": -6.2100, "lon": 106.8200, "min_score": 70},
+            {"name": "SMK Kreatif", "dist": 4.2, "lat": -6.2150, "lon": 106.8300, "min_score": 68},
+            {"name": "SMA Negeri 3", "dist": 5.8, "lat": -6.2250, "lon": 106.8400, "min_score": 72},
         ],
         'C': [
-            {"name": "SMA Favorit", "dist": 9.5, "lat": -6.2500, "lon": 106.8600},
-            {"name": "SMK Teknik", "dist": 12.0, "lat": -6.2700, "lon": 106.8800},
-            {"name": "SMA Unggulan", "dist": 18.3, "lat": -6.3000, "lon": 106.9000},
+            {"name": "SMA Favorit", "dist": 9.5, "lat": -6.2500, "lon": 106.8600, "min_score": 85},
+            {"name": "SMK Teknik", "dist": 12.0, "lat": -6.2700, "lon": 106.8800, "min_score": 80},
+            {"name": "SMA Unggulan", "dist": 18.3, "lat": -6.3000, "lon": 106.9000, "min_score": 88},
         ],
     }
     if not p.exists():
@@ -249,7 +249,7 @@ def main():
             for i, item in enumerate(zrecs, start=1):
                 rname = item.get('name') if isinstance(item, dict) else item[0]
                 rdist = item.get('dist') if isinstance(item, dict) else item[1]
-                print(f"  {i}. {rname} — {rdist} km")
+                print(f"  {i}. {rname} — {rdist} km (Perkiraan nilai minimal: {item.get('min_score','-')})")
 
             # allow user to pick one of the recommendations as the chosen school
             while True:

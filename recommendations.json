@@ -12,6 +12,6 @@
   "C": [
     {"name": "SMA Favorit", "dist": 9.5, "min_score": 85},
     {"name": "SMK Teknik", "dist": 12.0, "min_score": 80},
-    {"name": "SMA Unggulan", "dist": 18.3}
+    {"name": "SMA Unggulan", "dist": 18.3, "min_score": 88}
   ]
 }
