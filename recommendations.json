@@ -1,0 +1,17 @@
+{
+  "A": [
+    {"name": "SMA 1 Kota", "dist": 1.2},
+    {"name": "SMP Harapan", "dist": 1.8},
+    {"name": "SD Nusantara", "dist": 0.9}
+  ],
+  "B": [
+    {"name": "SMA 2 Kota", "dist": 3.5},
+    {"name": "SMK Kreatif", "dist": 4.2},
+    {"name": "SMA Negeri 3", "dist": 5.8}
+  ],
+  "C": [
+    {"name": "SMA Favorit", "dist": 9.5},
+    {"name": "SMK Teknik", "dist": 12.0},
+    {"name": "SMA Unggulan", "dist": 18.3}
+  ]
+}
